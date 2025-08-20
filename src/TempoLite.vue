@@ -738,29 +738,6 @@
           </div>
 
           <hr style="border-color: grey">
-            <div>
-              <h2>Create a Selection</h2>
-              <v-btn
-                size="small"
-                :active="createSelectionActive"
-                @click="createSelectionActive = !createSelectionActive"
-              >
-                <template #prepend>
-                  <v-icon v-if="!createSelectionActive" icon="mdi-plus"></v-icon>
-                </template>
-                {{ createSelectionActive ? "Cancel" : "Create Selection" }}
-              </v-btn>
-              <selection-composer
-                v-show="createSelectionActive"
-                :backend="BACKEND"
-                :time-ranges="availableTimeRanges"
-                :regions="availableRegions"
-                :disabled="{ region: selectionActive, timeRange: createTimeRangeActive }"
-                @create="handleSelectionCreated"
-              >
-              </selection-composer>
-            </div>
-          <hr style="border-color: grey">
 
           <div id="user-options">
             <h2>Options</h2>  
@@ -872,6 +849,31 @@
                 </template>
               </v-expansion-panel>
             </v-expansion-panels>
+
+            <hr style="border-color: grey">
+
+            <div>
+              <h2>Create a Selection</h2>
+              <v-btn
+                size="small"
+                :active="createSelectionActive"
+                @click="createSelectionActive = !createSelectionActive"
+              >
+                <template #prepend>
+                  <v-icon v-if="!createSelectionActive" icon="mdi-plus"></v-icon>
+                </template>
+                {{ createSelectionActive ? "Cancel" : "Create Selection" }}
+              </v-btn>
+              <selection-composer
+                v-show="createSelectionActive"
+                :backend="BACKEND"
+                :time-ranges="availableTimeRanges"
+                :regions="availableRegions"
+                :disabled="{ region: selectionActive, timeRange: createTimeRangeActive }"
+                @create="handleSelectionCreated"
+              >
+              </selection-composer>
+            </div>
 
           <hr style="border-color: grey">
 
