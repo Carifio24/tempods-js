@@ -39,7 +39,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
 
     let dragging = false;
 
-    mousedown = (event: MouseEvent) => {
+    mousedown = async (event: MouseEvent) => {
       if (options.dragPredicate && !options.dragPredicate(event.target as HTMLElement)) {
         element.style.cursor = "";
         return;
@@ -49,7 +49,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
       element.style.cursor = "grabbing";
       const closestDialog = element.closest(dialogSelector);
       if (event.button === 0 && closestDialog != null) {
-        const boundingRect = getElementRect(closestDialog);
+        const boundingRect = await getElementRect(closestDialog);
         const d: DragInfo = {
           el: closestDialog as HTMLElement,
           title: element,
@@ -85,7 +85,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
     };
     element.addEventListener("mousedown", mousedown);
 
-    mousemove = (event: MouseEvent) => {
+    mousemove = async (event: MouseEvent) => {
       if (options.dragPredicate && !options.dragPredicate(event.target as HTMLElement)) {
         element.style.cursor = "";
         return;
@@ -94,7 +94,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
       if (dragInfo === null || dragInfo.el == null) {
         return;
       }
-      const boundingRect = getElementRect(dragInfo.el);
+      const boundingRect = await getElementRect(dragInfo.el);
       dragInfo.el.style.left = Math.min(
         Math.max(dragInfo.elStartX + event.clientX - dragInfo.mouseStartX, 0),
         window.innerWidth - boundingRect.width
@@ -129,16 +129,16 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
     
     // If the window changes size, the dialog may be partially/completely out of bounds
     // We fix that here
-    const resizeObserver = new ResizeObserver(entries => {
-      entries.forEach(entry => {
+    const resizeObserver = new ResizeObserver(async (entries) => {
+      for (const entry of entries) {
         const dialogs = entry.target.querySelectorAll(dialogSelector);
-        dialogs.forEach(d => {
+        for (const d of dialogs) {
           const dialog = d as HTMLElement;
-          const boundingRect = getElementRect(dialog);
+          const boundingRect = await getElementRect(dialog);
           dialog.style.left = Math.min(parseInt(dialog.style.left), window.innerWidth - boundingRect.width) + "px";
           dialog.style.top = Math.min(parseInt(dialog.style.top), window.innerHeight - boundingRect.height) + "px";
-        });
-      });
+        }
+      }
     });
     resizeObserver.observe(document.body);
   }

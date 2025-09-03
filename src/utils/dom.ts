@@ -1,26 +1,16 @@
-export function getElementRect(element: Element): DOMRectReadOnly {
+export async function getElementRect(element: Element): Promise<DOMRectReadOnly> {
   let rect: DOMRectReadOnly | null = null;
-  let observed = false;
+  let resolveRectPromise: (value: DOMRectReadOnly | PromiseLike<DOMRectReadOnly>) => void;
+  const rectPromise = new Promise<DOMRectReadOnly>((resolve, _reject) => {
+    resolveRectPromise = resolve;
+  });
   const observer = new IntersectionObserver(entries => {
-    console.log(entries);
-    for (const entry of entries) {
-      rect = entry.boundingClientRect;
-      console.log(rect);
-    }
+    rect = entries[0].boundingClientRect;
+    resolveRectPromise(rect);
 
-    observed = true;
     observer.disconnect();
   });
-
   observer.observe(element);
 
-  while (!observed) {
-    // pass
-  }
-
-  if (rect === null) {
-    rect = element.getBoundingClientRect();
-  }
-  
-  return rect;
+  return rectPromise;
 }
