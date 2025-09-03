@@ -36,8 +36,8 @@
           <v-btn
             class="cds-dialog-close-icon"
             icon="mdi-close"
-            @click="showDialog = false"
-            @keyup:enter="showDialog = false"
+            @click="close"
+            @keyup:enter="close"
           >
           </v-btn>
         </v-toolbar>
@@ -112,6 +112,11 @@ function updateRoot() {
       cardRoot.value = card.value.$el;
     }
   });
+}
+
+function close(event: PointerEvent) {
+  showDialog.value = false;
+  event.stopPropagation();
 }
 
 onMounted(() => {

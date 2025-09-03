@@ -1,4 +1,5 @@
 import { onBeforeUnmount, Ref, watch } from "vue";
+import { getElementRect } from "../utils/dom";
 
 import { DragInfo } from "../types";
 
@@ -48,7 +49,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
       element.style.cursor = "grabbing";
       const closestDialog = element.closest(dialogSelector);
       if (event.button === 0 && closestDialog != null) {
-        const boundingRect = closestDialog.getBoundingClientRect();
+        const boundingRect = getElementRect(closestDialog);
         const d: DragInfo = {
           el: closestDialog as HTMLElement,
           title: element,
@@ -93,7 +94,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
       if (dragInfo === null || dragInfo.el == null) {
         return;
       }
-      const boundingRect = dragInfo.el.getBoundingClientRect();
+      const boundingRect = getElementRect(dragInfo.el);
       dragInfo.el.style.left = Math.min(
         Math.max(dragInfo.elStartX + event.clientX - dragInfo.mouseStartX, 0),
         window.innerWidth - boundingRect.width
@@ -133,7 +134,7 @@ export function useDraggableDialog(options: UseDraggableDialogOptions) {
         const dialogs = entry.target.querySelectorAll(dialogSelector);
         dialogs.forEach(d => {
           const dialog = d as HTMLElement;
-          const boundingRect = dialog.getBoundingClientRect();
+          const boundingRect = getElementRect(dialog);
           dialog.style.left = Math.min(parseInt(dialog.style.left), window.innerWidth - boundingRect.width) + "px";
           dialog.style.top = Math.min(parseInt(dialog.style.top), window.innerHeight - boundingRect.height) + "px";
         });
