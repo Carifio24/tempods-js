@@ -11,6 +11,7 @@
             @internal-model-change="(value: Date) => {
               if (value != null && value.getTime() != singleDateSelected.getTime()) {
                 radio = null;
+                value.setHours(0, 0, 0, 0);
                 singleDateSelected = value;
                 calendar?.closeMenu();
               }

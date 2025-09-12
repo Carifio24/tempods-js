@@ -9,7 +9,10 @@ function isBad(value: unknown): value is null | undefined {
 
 export const useUniqueTimeSelection = (timestamps: Ref<number[]>) => {
   const timeIndex = ref(0);
-  const singleDateSelected = ref<Date>(new Date());
+
+  const initialDate = new Date();
+  initialDate.setHours(0, 0, 0, 0);
+  const singleDateSelected = ref<Date>(initialDate);
   const minIndex = ref<number>(0);
   const maxIndex = ref<number>(0);
   
@@ -45,7 +48,9 @@ export const useUniqueTimeSelection = (timestamps: Ref<number[]>) => {
       return;
     }
 
+    console.log(new Date(date));
     const mod = mode.value === 'single' ? getOneDaysTimestamps(new Date(date)) : getAllDaysTimestamps(new Date(date));
+    console.log(mod);
     if (mod.length > 0) {
       minIndex.value = mod[0].idx;
       maxIndex.value = mod[mod.length - 1].idx;
@@ -73,6 +78,7 @@ export const useUniqueTimeSelection = (timestamps: Ref<number[]>) => {
     const easternDates = timestamps.value.map(ts => new Date(ts + offset(new Date(ts))));
     const days = easternDates.map(date => (new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())).getTime());
     const unique = Array.from(new Set(days));
+    console.log(unique.map(ts => new Date(ts)));
     return unique.map(ts => new Date(ts));
   });
 
