@@ -38,6 +38,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { UseClipboard } from "@vueuse/components";
 
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 library.add(faBookOpen);
 library.add(faPlay);
@@ -58,6 +59,7 @@ library.add(faHome);
 const update = (el: HTMLElement, binding: Vue.DirectiveBinding) => el.style.visibility = (binding.value) ? "hidden" : "";
 
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 createApp(TempoLite, {})
 

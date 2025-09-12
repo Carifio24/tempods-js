@@ -373,6 +373,8 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
     moveForwardOneDay,
     nearestDateIndex,
   };
+}, {
+  persist: true,
 });
 
 export const useTempoStore = createTempoStore("maplibre");
