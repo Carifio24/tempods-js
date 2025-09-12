@@ -92,6 +92,14 @@ onMounted(() => {
   };
   layout.resizeWithContainerAutomatically = true;
   layout.loadLayout(config);
+
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      store.$persist(true);
+    }
+  });
 });
 </script>
 

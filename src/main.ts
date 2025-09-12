@@ -33,12 +33,13 @@ import {
   faHome,
 } from "@fortawesome/free-solid-svg-icons";
 
+
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 import { UseClipboard } from "@vueuse/components";
 
 import { createPinia } from "pinia";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createPersistedState, type PluginOptions as PiniaPersistenceOptions } from "pinia-plugin-persistedstate";
 
 library.add(faBookOpen);
 library.add(faPlay);
@@ -59,7 +60,11 @@ library.add(faHome);
 const update = (el: HTMLElement, binding: Vue.DirectiveBinding) => el.style.visibility = (binding.value) ? "hidden" : "";
 
 const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
+const persistenceOptions: PiniaPersistenceOptions = {
+  storage: localStorage,
+  debug: true,  // For now
+};
+pinia.use(createPersistedState(persistenceOptions));
 
 createApp(TempoLite, {})
 
@@ -73,7 +78,7 @@ createApp(TempoLite, {})
     * Hides an HTML element, keeping the space it would have used if it were visible (css: Visibility)
     */
     "hide", {
-      // Run on initialisation (first render) of the directive on the element
+    // Run on initialisation (first render) of the directive on the element
       beforeMount(el, binding, _vnode, _prevVnode) {
         update(el, binding);
       },

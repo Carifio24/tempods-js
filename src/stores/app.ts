@@ -1,8 +1,9 @@
-import { defineStore } from "pinia";
+import { defineStore, type StateTree } from "pinia";
 import { computed, ref, watch } from "vue";
 import { v4 } from "uuid";
+import { stringify, parse } from "zipson";
 
-import type { InitMapOptions, LatLngPair, MappingBackends, SelectionType, TimeRange, UnifiedRegion, UserDataset } from "@/types";
+import type { AggValue, InitMapOptions, LatLngPair, MappingBackends, SelectionType, TimeRange, UnifiedRegion, UserDataset } from "@/types";
 import { ESRI_URLS, MoleculeType } from "@/esri/utils";
 import { TempoDataService } from "@/esri/services/TempoDataService";
 import { useUniqueTimeSelection } from "@/composables/useUniqueTimeSelection";
@@ -10,6 +11,12 @@ import { useTimezone, type Timezone } from "@/composables/useTimezone";
 import { atleast1d } from "@/utils/atleast1d";
 import { formatSingleRange, rangeForSingleDay } from "@/utils/timeRange";
 import { colorbarOptions } from "@/esri/ImageLayerConfig";
+
+function persistTempoStore(tree: StateTree, trigger=false): string {
+  console.log("Persisting tempo store");
+  console.log(trigger);
+  return trigger ? "" : stringify(tree);
+}
 
 
 const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) => defineStore("tempods", () => {
@@ -374,7 +381,27 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
     nearestDateIndex,
   };
 }, {
-  persist: true,
+  persist: {
+    serializer: {
+      serialize: persistTempoStore,
+      deserialize: (value: string) => {
+        const parsed = parse(value);
+        parsed.singleDateSelected = new Date(parsed.singleDateSelected);
+        for (const dataset of parsed.datasets) {
+          const samples = dataset.samples as Record<number, AggValue>;
+          if (samples) {
+            for (const entry of Object.values(samples)) {
+              entry.date = new Date(entry.date);
+            }
+          }
+        }
+        console.log("Deserializer");
+        console.log(parsed);
+        return parsed;
+      },
+    },
+    omit: ["selectionActive"],
+  },
 });
 
 export const useTempoStore = createTempoStore("maplibre");
