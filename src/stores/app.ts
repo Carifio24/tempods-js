@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, toRaw } from "vue";
 import { v4 } from "uuid";
+import { isComputedRef } from "@/utils/vue";
+// import { parse } from "zipson";
 
-import type { InitMapOptions, LatLngPair, MappingBackends, SelectionType, TimeRange, UnifiedRegion, UserDataset } from "@/types";
+import type { AggValue, InitMapOptions, LatLngPair, MappingBackends, SelectionType, TimeRange, UnifiedRegion, UserDataset } from "@/types";
 import { ESRI_URLS, MoleculeType } from "@/esri/utils";
 import { TempoDataService } from "@/esri/services/TempoDataService";
 import { useUniqueTimeSelection } from "@/composables/useUniqueTimeSelection";
@@ -10,7 +12,6 @@ import { useTimezone, type Timezone } from "@/composables/useTimezone";
 import { atleast1d } from "@/utils/atleast1d";
 import { formatSingleRange, rangeForSingleDay } from "@/utils/timeRange";
 import { colorbarOptions } from "@/esri/ImageLayerConfig";
-
 
 const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) => defineStore("tempods", () => {
   type UnifiedRegionType = UnifiedRegion<T>;
@@ -376,3 +377,37 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
 });
 
 export const useTempoStore = createTempoStore("maplibre");
+
+export function deserializeTempoStore(value: string) {
+  const parsed = JSON.parse(value);
+  parsed.singleDateSelected = new Date(parsed.singleDateSelected);
+  for (const dataset of parsed.datasets) {
+    const samples = dataset.samples as Record<number, AggValue>;
+    if (samples) {
+      for (const entry of Object.values(samples)) {
+        entry.date = new Date(entry.date);
+      }
+    }
+  }
+  return parsed;
+}
+
+const OMIT = new Set(["selectionActive"]);
+export function serializeTempoStore(store: ReturnType<typeof useTempoStore>): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const state: Record<string, any> = {};
+  for (const [key, value] of Object.entries(store.$state)) {
+    if (OMIT.has(key) || isComputedRef(value)) {
+      continue;
+    }
+    state[key] = toRaw(value);
+  }
+  state.regions = state.regions.map(r => {
+    const s = { ...r };
+    delete s.layer;
+    return s;
+  });
+  const stringified = JSON.stringify(state);
+  console.log(stringified);
+  return stringified;
+}

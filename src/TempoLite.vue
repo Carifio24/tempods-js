@@ -22,11 +22,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef, type Ref } from "vue";
+import { computed, onBeforeMount, onMounted, ref, useTemplateRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { GoldenLayout, LayoutConfig } from "golden-layout";
+// import { stringify } from "zipson";
 
-import { useTempoStore } from "@/stores/app";
+import { useTempoStore, deserializeTempoStore, serializeTempoStore } from "@/stores/app";
 
 const root = useTemplateRef("root");
 const mapTarget = ref<HTMLElement | null>(null);
@@ -45,6 +46,16 @@ const cssVars = computed(() => {
     '--accent-color-2': accentColor2.value,
     '--info-background': infoColor,
   };
+});
+
+const localStorageKey = "tempods";
+
+onBeforeMount(() => {
+  const storedState = window.localStorage.getItem(localStorageKey);
+  if (storedState) {
+    const state = deserializeTempoStore(storedState);
+    store.$patch(state);
+  }
 });
 
 onMounted(() => {
@@ -92,6 +103,13 @@ onMounted(() => {
   };
   layout.resizeWithContainerAutomatically = true;
   layout.loadLayout(config);
+
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      const stringified = serializeTempoStore(store); 
+      window.localStorage.setItem(localStorageKey, stringified);
+    }
+  });
 });
 </script>
 

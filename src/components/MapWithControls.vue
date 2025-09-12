@@ -210,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch, type Ref, type WritableComputedRef } from "vue";
+import { computed, ref, toRaw, useTemplateRef, watch, type Ref, type WritableComputedRef } from "vue";
 import { useDisplay } from 'vuetify';
 import { storeToRefs } from "pinia";
 import { MapBoxFeature, MapBoxFeatureCollection, MapBoxFeatureType, MapBoxForwardGeocodingOptions, geocodingInfoForSearch } from "@cosmicds/vue-toolkit";
@@ -464,10 +464,10 @@ function createRegion(info: RectangleSelectionInfo | PointSelectionInfo, geometr
   return {
     id: v4(),
     name: `${isRect ? 'Region' : 'Point'} ${regionsCreatedCount.value}`,
-    geometryInfo: info,
+    geometryInfo: toRaw(info),
     geometryType: geometryType,
     color,
-    layer,
+    layer: toRaw(layer),
   };
 
 }
