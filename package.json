@@ -17,6 +17,7 @@
     "mapbox-gl-esri-sources": "^0.0.7",
     "maplibre-gl": "^5.5.0",
     "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
     "plotly.js-dist-min": "^3.0.3",
     "stream": "^0.0.3",
     "uuid": "^11.1.0",
