@@ -14,10 +14,9 @@ import { formatSingleRange, rangeForSingleDay } from "@/utils/timeRange";
 import { colorbarOptions } from "@/esri/ImageLayerConfig";
 
 const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) => defineStore("tempods", () => {
-  type UnifiedRegionType = UnifiedRegion<T>;
 
   const timeRanges = ref<TimeRange[]>([]);
-  const regions = ref<UnifiedRegionType[]>([]);
+  const regions = ref<UnifiedRegion[]>([]);
   const datasets = ref<UserDataset[]>([]);
   const timestamps = ref<number[]>([]);
   const timestampsLoaded = ref(false);
@@ -37,7 +36,7 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
   const opacitySliderUsedCount = ref(0);
 
   const selectionActive = ref<SelectionType>(null);
-  const lastFocusedRegion = ref<UnifiedRegionType | null>(null);
+  const lastFocusedRegion = ref<UnifiedRegion | null>(null);
 
   const colorMap = computed(() => colorbarOptions[molecule.value].colormap.toLowerCase());
 
@@ -191,7 +190,7 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
     singleDateSelected.value = uniqueDays.value[uniqueDays.value.length - 1];
   });
 
-  function addRegion(region: UnifiedRegionType) {
+  function addRegion(region: UnifiedRegion) {
     // TODO: Fix the typing here
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -221,14 +220,14 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
     }
   }
 
-  function setRegionName(region: UnifiedRegionType, newName: string) {
+  function setRegionName(region: UnifiedRegion, newName: string) {
     if (newName.trim() === '') {
       console.error("Region name cannot be empty.");
       return;
     }
     // eslint-disable-next-line
     // @ts-ignore it is not actually deep
-    const existing = (regions.value as UnifiedRegionType[]).find(r => r.name === newName && r.id !== region.id);
+    const existing = (regions.value as UnifiedRegion[]).find(r => r.name === newName && r.id !== region.id);
     if (existing) {
       console.error(`A region with the name "${newName}" already exists.`);
       return;
@@ -290,12 +289,12 @@ const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) =
     return (dataset.samples !== undefined) && Object.keys(dataset.samples).length > 0;
   }
 
-  function regionHasDatasets(region: UnifiedRegionType): boolean {
+  function regionHasDatasets(region: UnifiedRegion): boolean {
     const sel = datasets.value.find(ds => ds.region.id === region.id);
     return sel !== undefined;
   }
 
-  function deleteRegion(region: UnifiedRegionType) {
+  function deleteRegion(region: UnifiedRegion) {
     const index = regions.value.findIndex(r => r.id === region.id);
     if (index < 0) {
       return;

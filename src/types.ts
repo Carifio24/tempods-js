@@ -93,24 +93,22 @@ export interface PointSelectionInfo {
 // Unified selection types
 export type SelectionGeometry = RectangleSelectionInfo | PointSelectionInfo;
 
-export interface RectangleSelection<T extends MappingBackends> {
+export interface RectangleSelection {
   id: string;
   name: string;
   geometryInfo: RectangleSelectionInfo; // renamed from rectangle for future shape generalization
   geometryType: 'rectangle';
   color: string;
-  layer: RegionType<T>;
   source?: GeoJSONSource;
 }
 
 // Add to types.ts
-export interface PointSelection<T extends MappingBackends> {
+export interface PointSelection {
   id: string;
   name: string;
   geometryInfo: PointSelectionInfo;
   geometryType: 'point';
   color: string;
-  layer: RegionType<T>; // Reuse the same layer type
   source?: GeoJSONSource;
 }
 
@@ -161,6 +159,6 @@ export interface UseSelectionOptions<MapType, EventType, SelectionInfo> {
   active?: MaybeRef<boolean>;
 }
 
-export type UnifiedRegion<T extends MappingBackends> = RectangleSelection<T> | PointSelection<T>;
+export type UnifiedRegion = RectangleSelection | PointSelection;
 
 export type SelectionType = "rectangle" | "point" | null;

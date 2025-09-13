@@ -148,7 +148,7 @@ export function removePointLayer(
   map.removeSource(layer.id);
 }
 
-export function regionBounds(region: UnifiedRegion<"maplibre">): [[number, number], [number, number]] {
+export function regionBounds(region: UnifiedRegion): [[number, number], [number, number]] {
   const pointPadding = 1;
   return region.geometryType == "rectangle" ?
     [[region.geometryInfo.xmin, region.geometryInfo.ymin], [region.geometryInfo.xmax, region.geometryInfo.ymax]] :
