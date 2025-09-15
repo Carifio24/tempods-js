@@ -22,7 +22,7 @@ export function addRectangleLayer(
   info: RectangleSelectionInfo,
   color: string,
 ) {
-  
+
   const uuid = v4();
   const geoJson: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",

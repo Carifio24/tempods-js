@@ -214,11 +214,11 @@ import { computed, ref, toRaw, useTemplateRef, watch, type Ref, type WritableCom
 import { useDisplay } from 'vuetify';
 import { storeToRefs } from "pinia";
 import { MapBoxFeature, MapBoxFeatureCollection, MapBoxFeatureType, MapBoxForwardGeocodingOptions, geocodingInfoForSearch } from "@cosmicds/vue-toolkit";
-import { Map, GeoJSONSource } from "maplibre-gl";
+import { Map, GeoJSONSource, type StyleLayer } from "maplibre-gl";
 import { getTimezoneOffset } from "date-fns-tz";
 import { v4 } from "uuid";
 
-import type { LatLngPair, PointSelectionInfo, RectangleSelectionInfo, RegionType, SelectionType } from "@/types";
+import type { LatLngPair, PointSelectionInfo, RectangleSelectionInfo, SelectionType } from "@/types";
 import { type MoleculeType, MOLECULE_OPTIONS } from "@/esri/utils";
 import { colorbarOptions } from "@/esri/ImageLayerConfig";
 import { colormap } from "@/colormaps/utils";
@@ -263,6 +263,8 @@ const {
   maxSampleCount,
   colorMap,
   lastFocusedRegion,
+  initState,
+  homeState,
 } = storeToRefs(store);
 
 function createSelectionComputed(selection: SelectionType): WritableComputedRef<boolean> {
@@ -295,12 +297,9 @@ const onMapReady = (m: Map) => {
 
 const showLocationMarker = ref(true);
 const {
-  backend,
   setMarker,
   removeMarker,
   locationMarker,
-  initState,
-  homeState,
 } = useLocationMarker(map as Ref<Map | null>, showLocationMarker.value);
 
 const showFieldOfRegard = ref(false);
@@ -322,7 +321,7 @@ function activatePointSelectionMode() {
   pointSelectionActive.value = !pointSelectionActive.value;
 }
 
-const regionLayers: Record<string, RegionType<typeof backend.value>> = {};
+const regionLayers: Record<string, GeoJSONSource> = {};
 
 const currentColormap = computed(() => {
   return (x: number): string => {
@@ -468,15 +467,15 @@ function addLayer(
 }
 
 function removeLayer(
-  info: RectangleSelectionInfo | PointSelectionInfo,
+  layer: StyleLayer,
   geometryType: "rectangle" | "point",
-  color: string,
 ) {
+  console.log(layer);
   const isRect = geometryType === 'rectangle';
   if (isRect) {
-    removeRectangleLayer((map.value as MapType)!, info as RectangleSelectionInfo, color);
+    removeRectangleLayer((map.value as MapType)!, layer);
   } else {
-    removePointLayer((map.value as MapType)!, info as PointSelectionInfo, color);
+    removePointLayer((map.value as MapType)!, layer);
   }
 }
 
@@ -504,13 +503,16 @@ function getRegionsDifference(arr1: UnifiedRegionType[], arr2: UnifiedRegionType
 watch(regions, (newRegions: UnifiedRegionType[], oldRegions: UnifiedRegionType[]) => {
   const added = getRegionsDifference(newRegions, oldRegions);
   const removed = getRegionsDifference(oldRegions, newRegions);
+  console.log(added);
+  console.log(removed);
+  console.log("======");
   added.forEach(region => {
     const { layer } = addLayer(region.geometryInfo, region.geometryType, region.color);
     regionLayers[region.id] = layer;
   });
 
   removed.forEach(region => {
-    removeLayer(region.geometryInfo, region.geometryType, region.color);
+    removeLayer(regionLayers[region.id] as unknown as StyleLayer, region.geometryType);
     delete regionLayers[region.id];
   });
 });

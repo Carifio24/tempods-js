@@ -13,8 +13,7 @@ import { atleast1d } from "@/utils/atleast1d";
 import { formatSingleRange, rangeForSingleDay } from "@/utils/timeRange";
 import { colorbarOptions } from "@/esri/ImageLayerConfig";
 
-const createTempoStore = <T extends MappingBackends>(backend: MappingBackends) => defineStore("tempods", () => {
-
+const createTempoStore = (backend: MappingBackends) => defineStore("tempods", () => {
   const timeRanges = ref<TimeRange[]>([]);
   const regions = ref<UnifiedRegion[]>([]);
   const datasets = ref<UserDataset[]>([]);
