@@ -122,16 +122,6 @@
       dense
       class="mt-3 pl-3"
     ></v-select>
-    <v-select
-      v-model="molecule"
-      :items="MOLECULE_OPTIONS"
-      item-title="title"
-      item-value="value"
-      label="Molecule / Quantity"
-      hide-details
-      dense
-      class="mt-3 pl-3"
-    ></v-select>
   </div>
 </template>
 
@@ -141,7 +131,7 @@ import { storeToRefs } from "pinia";
 import { DatePickerInstance } from "@vuepic/vue-datepicker";
 import { supportsTouchscreen } from "@cosmicds/vue-toolkit";
 
-import { MOLECULE_OPTIONS, type MoleculeType } from "@/esri/utils";
+import { type MoleculeType } from "@/esri/utils";
 import { useTempoStore } from "@/stores/app";
 import { useEsriTimesteps } from "@/composables/useEsriTimesteps";
 

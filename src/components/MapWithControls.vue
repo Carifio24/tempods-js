@@ -15,7 +15,17 @@
           color="var(--info-background)"
         >
           <v-toolbar-title :text="`TEMPO Data Viewer: ${mapTitle}`"></v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-select
+            v-model="molecule"
+            :items="MOLECULE_OPTIONS"
+            item-title="title"
+            item-value="value"
+            label="Quantity"
+            hide-details
+            density="compact"
+            class="mt-3 pl-3"
+            flat
+          ></v-select>
           <!-- switch for preview points -->
            <v-switch
             v-if="regions.length > 0"
@@ -851,6 +861,18 @@ watch(focusRegion, region => {
   #opacity-slider-label {
     opacity: 0.7;
     width: fit-content;
+  }
+}
+
+.v-toolbar .v-select {
+  margin: 0 !important;
+
+  & .v-field__input {
+    font-size: 0.8em;
+  }
+
+  & .v-list-item-title {
+    font-size: 1em;
   }
 }
 
