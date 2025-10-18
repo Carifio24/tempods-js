@@ -170,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { supportsTouchscreen } from "@cosmicds/vue-toolkit";
@@ -211,9 +211,6 @@ const smallSize = computed(() => {
 const mobile = computed(() => {
   return smallSize.value && touchscreen;
 });
-
-watch(showConfirmReset, (value: boolean) => console.log(`showConfirmReset: ${value}`));
-
 </script>
 
 <style scoped lang="less">
@@ -253,6 +250,16 @@ a[href="https://tempo.si.edu"]>img {
     justify-self: end;
     gap: 1rem;
     align-items: center;
+
+    :deep(.icon-wrapper) {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px !important;
+    }
+
   }
 }
+
+
+
 </style>
