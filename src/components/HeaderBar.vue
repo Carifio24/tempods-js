@@ -56,6 +56,43 @@
         <v-tooltip location="bottom" activator="parent" :disabled="mobile" text="What's new"></v-tooltip>
         <v-icon>mdi-creation</v-icon>
       </v-btn>
+  
+      <icon-button
+        fa-icon="fa-arrows-rotate"
+        @activate="showConfirmReset = true"
+        tooltip-text="Reset app state"
+        :color="accentColor2"
+      >
+      </icon-button>
+      <v-dialog
+        v-model="showConfirmReset"
+        max-width="35%"
+      >
+        <v-card>
+          <v-card-text>
+            Are you sure you want to reset the app state? 
+            This will reset all of your regions, time ranges, 
+            and datasets, and cannot be undone.
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              color="error"
+              @click="showConfirmReset = false"
+            >
+              No
+            </v-btn>
+            <v-btn
+              color="success"
+              @click="() => {
+                store.reset();
+                showConfirmReset = false;
+              }"
+            >
+              Yes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <share-button
           :source="currentUrl"
           buttonColor="black"
@@ -133,13 +170,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { supportsTouchscreen } from "@cosmicds/vue-toolkit";
 
 import { useTempoStore } from "@/stores/app";
 import changes from "@/changes";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faArrowsRotate);
 
 const emit = defineEmits<{
   (event: "intro-slide", value: number): void;
@@ -157,6 +199,7 @@ const currentUrl = ref(window.location.href);
 const showChanges = ref(false);
 const showAboutData = ref(false);
 const showCredits = ref(false);
+const showConfirmReset = ref(false);
 
 const touchscreen = supportsTouchscreen();
 
@@ -168,6 +211,8 @@ const smallSize = computed(() => {
 const mobile = computed(() => {
   return smallSize.value && touchscreen;
 });
+
+watch(showConfirmReset, (value: boolean) => console.log(`showConfirmReset: ${value}`));
 
 </script>
 
