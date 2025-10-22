@@ -15,7 +15,6 @@
           color="var(--info-background)"
         >
           <v-toolbar-title :text="`TEMPO Data Viewer: ${mapTitle}`"></v-toolbar-title>
-          <v-spacer></v-spacer>
           <!-- switch for preview points -->
           <v-tooltip :text="selectionActive === 'rectangle' ? 'Cancel selection' : 'Select a region'">
             <template #activator="{ props }">
