@@ -1,62 +1,16 @@
 <template>
   <div id="dataset-sections" :style="cssVars">
-    <h2>Investigate Patterns with Time</h2>
     <div id="add-region-time">
+      <p>
+        Select a Region, Time Range, and Molecule to create a dataset of your choice!
+      </p>
       <v-expansion-panels
         v-model="openPanels"
         variant="accordion"
         id="user-options-panels"
         multiple
         class="pl-3"
-      >
-        <v-expansion-panel
-          title="Time Ranges"
-          class="mt-3 h3-panel-titles"
-        >
-          <template #text>
-            <v-btn
-              size="small"
-              :active="createTimeRangeActive"
-              :color="accentColor2"
-              @click="createTimeRangeActive = !createTimeRangeActive"
-            >
-              <template #prepend>
-                <v-icon v-if="!createTimeRangeActive" icon="mdi-plus"></v-icon>
-              </template>
-              {{ createTimeRangeActive ? "Cancel" : "New Time Range" }}
-            </v-btn>
-            <date-time-range-selection
-              v-if="createTimeRangeActive"
-              :current-date="singleDateSelected"
-              :allowed-dates="uniqueDays"
-              @ranges-change="handleDateTimeRangeSelectionChange"
-            />
-            <div class="my-selections" v-if="timeRanges.length>0" style="margin-top: 1em;">
-              <h4>My Time Ranges</h4>
-              <v-list>
-                <v-list-item
-                  v-for="(timeRange, index) in timeRanges"
-                  :key="index"
-                  :title="timeRange.name === 'Displayed Day' ? `Displayed Day: ${ formatTimeRange(timeRange.range) }` : (timeRange.name ?? formatTimeRange(timeRange.range))"
-                  style="background-color: #444444"
-                >
-
-                  <template #append>
-                    <v-btn
-                      v-if="timeRange.id !== 'displayed-day' && !datasets.some(s => areEquivalentTimeRanges(s.timeRange, timeRange))"
-                      variant="plain"
-                      v-tooltip="'Delete'"
-                      icon="mdi-delete"
-                      color="white"
-                      @click="() => store.deleteTimeRange(timeRange)"
-                    >
-                    </v-btn>
-                  </template>
-                </v-list-item>
-              </v-list>
-            </div>
-          </template>
-        </v-expansion-panel>
+      > 
         <v-expansion-panel
           title="Regions"
           class="mt-3 h3-panel-titles"
@@ -119,6 +73,54 @@
                         event.stopPropagation();
                       }"
                     ></v-btn>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </div>
+          </template>
+        </v-expansion-panel>
+        <v-expansion-panel
+          title="Time Ranges"
+          class="mt-3 h3-panel-titles"
+        >
+          <template #text>
+            <v-btn
+              size="small"
+              :active="createTimeRangeActive"
+              :color="accentColor2"
+              @click="createTimeRangeActive = !createTimeRangeActive"
+            >
+              <template #prepend>
+                <v-icon v-if="!createTimeRangeActive" icon="mdi-plus"></v-icon>
+              </template>
+              {{ createTimeRangeActive ? "Cancel" : "New Time Range" }}
+            </v-btn>
+            <date-time-range-selection
+              v-if="createTimeRangeActive"
+              :current-date="singleDateSelected"
+              :allowed-dates="uniqueDays"
+              @ranges-change="handleDateTimeRangeSelectionChange"
+            />
+            <div class="my-selections" v-if="timeRanges.length>0" style="margin-top: 1em;">
+              <h4>My Time Ranges</h4>
+              <v-list>
+                <v-list-item
+                  v-for="(timeRange, index) in timeRanges"
+                  :key="index"
+                  :title="timeRange.name === 'Displayed Day' ? `Displayed Day: ${ formatTimeRange(timeRange.range) }` : (timeRange.name ?? formatTimeRange(timeRange.range))"
+                  style="background-color: #444444"
+                >
+
+                  <template #append>
+                    <v-btn
+                      v-if="timeRange.id !== 'displayed-day' && !datasets.some(s => areEquivalentTimeRanges(s.timeRange, timeRange))"
+                      variant="plain"
+                      v-tooltip="'Delete'"
+                      icon="mdi-delete"
+                      color="white"
+                      @click="() => store.deleteTimeRange(timeRange)"
+                    >
+                    </v-btn>
                   </template>
                 </v-list-item>
               </v-list>
@@ -729,7 +731,7 @@ function plotlyDragPredicate(element: HTMLElement): boolean {
 
 const touchscreen = supportsTouchscreen();
 
-const openPanels = ref<number[]>([]);
+const openPanels = ref<number[]>([0, 1, 2]);
 const openGraphs = ref<Record<string,boolean>>({});
 const openSelection = ref<string | null>(null);
 const tableSelection = ref<UserDataset | null>(null);

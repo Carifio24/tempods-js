@@ -11,7 +11,7 @@
     </a>
     </div>
 
-    <h1 id="title">What is in the Air You Breathe?</h1>
+    <h1 id="title">TEMPO Lab: Investigate Air Quality</h1>
     <!-- <cds-dialog
       title="Time Series"
       v-model="samplesGraph"
