@@ -3,7 +3,7 @@ import Vue, { createApp } from "vue";
 
 import { FundingAcknowledgement, IconButton, CreditLogos } from "@cosmicds/vue-toolkit";
 import LocationSearch from "./components/LocationSearch.vue";
-import TempoLite from "./TempoLite.vue";
+import TempoLab from "./TempoLab.vue";
 import Colorbar from './components/ColorBar.vue';
 import ColorBarHorizontal from "./components/ColorBarHorizontal.vue";
 import InfoButton from "./components/InfoButton.vue";
@@ -62,7 +62,7 @@ const update = (el: HTMLElement, binding: Vue.DirectiveBinding) => el.style.visi
 
 const pinia = createPinia();
 
-createApp(TempoLite, {})
+createApp(TempoLab, {})
 
   // Plugins
   .use(vuetify)
