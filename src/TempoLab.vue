@@ -20,7 +20,29 @@
       v-if="sidePanelTarget"
       :to="sidePanelTarget"
     >
-      <comparison-data-controls />
+      <v-tabs
+        v-model="tab"
+      >
+        <v-tab :value="0">TEMPO Deep Dive</v-tab>
+        <v-tab :value="1">Comparison Data</v-tab>
+      </v-tabs>
+      
+      <v-tabs-window v-model="tab">
+        <v-tabs-window-item
+          class="tab-content"
+          :value="0"
+          :key="0"
+        >
+          <dataset-controls />
+        </v-tabs-window-item>
+        <v-tabs-window-item
+          :value="1"
+          :key="1"
+          class="tab-content"
+        >
+          <comparison-data-controls />
+        </v-tabs-window-item>
+      </v-tabs-window>
     </teleport>
   </v-app>
 </template>
@@ -37,6 +59,7 @@ type MaybeHTMLElement = HTMLElement | null;
 const root = useTemplateRef("root");
 const mapTargets = reactive<Record<string, Ref<MaybeHTMLElement>>>({});
 const sidePanelTarget = ref<MaybeHTMLElement>(null);
+const tab = ref(0);
 
 const store = useTempoStore();
 const {
