@@ -16,6 +16,7 @@ import TimeseriesGraph from "./components/TimeseriesGraph.vue";
 import SelectionComposer from "./components/SelectionComposer.vue";
 import HeaderBar from "./components/HeaderBar.vue";
 import DatasetControls from "./components/DatasetControls.vue";
+import ComparisonDataControls from "./components/ComparisonDataControls.vue";
 import MapControls from "./components/MapControls.vue";
 import MapWithControls from "./components/MapWithControls.vue";
 import LayerOrderControl from "./components/LayerOrderControl.vue";
@@ -102,6 +103,7 @@ createApp(TempoLab, {})
   .component('timeseries-graph', TimeseriesGraph)
   .component('selection-composer', SelectionComposer)
   .component('dataset-controls', DatasetControls)
+  .component('comparison-data-controls', ComparisonDataControls)
   .component('map-controls', MapControls)
   .component('map-with-controls', MapWithControls)
   .component("header-bar", HeaderBar)

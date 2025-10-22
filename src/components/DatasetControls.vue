@@ -168,7 +168,7 @@
               :datasets="datasets"
               :turn-on-selection="allDatasetSelection"
               v-model:selected-datasets="selectedDatasets"
-              >
+            >
               <template #action-row="{ isHovering, dataset }">
                     <div
                       v-if="(dataset.loading || !dataset.samples)  && !(dataset.timeRange?.type === 'folded' && dataset.plotlyDatasets)"

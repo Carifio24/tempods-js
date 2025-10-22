@@ -18,44 +18,9 @@
 
     <teleport
       v-if="sidePanelTarget"
-      :to="sidePanelTarget">
-      <v-tabs
-        v-model="tab"
-      >
-        <v-tab :value="0">TEMPO Deep Dive</v-tab>
-        <v-tab :value="1">Comparison Data</v-tab>
-      </v-tabs>
-      
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item
-          class="tab-content"
-          :value="0"
-          :key="0"
-        >
-          <dataset-controls />
-        </v-tabs-window-item>
-        <v-tabs-window-item
-          :value="1"
-          :key="1"
-          class="tab-content"
-        >
-          <div
-            v-for="(map, index) in maps"
-            :key="index"
-          >
-            <layer-order-control
-              :mapRef="map"
-              :order="['power-plants-heatmap', 'aqi-layer-aqi', 'esri-source']"
-            >
-            </layer-order-control>
-            <power-plants-filter-control
-              :map="map"
-              layer-id="power-plants-heatmap"
-            >
-            </power-plants-filter-control>
-          </div>
-        </v-tabs-window-item>
-      </v-tabs-window>
+      :to="sidePanelTarget"
+    >
+      <comparison-data-controls />
     </teleport>
   </v-app>
 </template>
@@ -72,13 +37,11 @@ type MaybeHTMLElement = HTMLElement | null;
 const root = useTemplateRef("root");
 const mapTargets = reactive<Record<string, Ref<MaybeHTMLElement>>>({});
 const sidePanelTarget = ref<MaybeHTMLElement>(null);
-const tab = ref(0);
 
 const store = useTempoStore();
 const {
   accentColor,
   accentColor2,
-  maps,
 } = storeToRefs(store);
 
 const infoColor = "#092088";
