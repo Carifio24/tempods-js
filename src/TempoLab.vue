@@ -252,4 +252,10 @@ body {
   }
 }
 
+.tab-content {
+  padding: 0.5rem 1rem;
+  border: 5px solid var(--tempo-red);
+  border-radius: 10px;
+  margin: 10px;
+}
 </style>

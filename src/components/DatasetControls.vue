@@ -935,13 +935,6 @@ watch(tableSelection, (newVal) => {
 </script>
 
 <style scoped lang="less">
-#dataset-sections {
-  padding: 0.5rem 1rem;
-  border: 5px solid var(--tempo-red);
-  border-radius: 10px;
-  margin: 10px;
-}
-
 // prevent overflows of the content
 #add-region-time {
   display: flex;
