@@ -1,6 +1,44 @@
 <template>
   <div id="dataset-sections" :style="cssVars">
     <h2>Investigate Patterns with Time</h2>
+      <v-btn
+        v-if="regions.length > 0 || timeRanges.length > 1"
+        :color="accentColor2"
+        @click="showConfirmReset = true"
+      >
+        Delete ALL selections
+      </v-btn>
+      <v-dialog
+        v-model="showConfirmReset"
+        max-width="35%"
+      >
+        <v-card>
+          <v-card-text>
+            Are you sure you want to delete all of your selections? 
+            This will remove all of your regions, time ranges, 
+            and datasets, and cannot be undone.
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              color="error"
+              @click="showConfirmReset = false"
+            >
+              No
+            </v-btn>
+            <v-btn
+              color="success"
+              @click="() => {
+                store.reset();
+                serializeTempoStore(store);
+                showConfirmReset = false;
+              }"
+            >
+              Yes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
     <div id="add-region-time">
       <v-expansion-panels
         v-model="openPanels"
@@ -683,7 +721,7 @@ import { v4 } from "uuid";
 import { supportsTouchscreen } from "@cosmicds/vue-toolkit";
 
 import type { MillisecondRange, TimeRange, UserDataset, UnifiedRegion } from "../types";
-import { useTempoStore } from "../stores/app";
+import { serializeTempoStore, useTempoStore } from "../stores/app";
 import { MOLECULE_OPTIONS } from "../esri/utils";
 import { areEquivalentTimeRanges, formatTimeRange } from "../utils/timeRange";
 import { atleast1d } from "../utils/atleast1d";
@@ -734,6 +772,7 @@ const openGraphs = ref<Record<string,boolean>>({});
 const openSelection = ref<string | null>(null);
 const tableSelection = ref<UserDataset | null>(null);
 const currentlyEditingDataset = ref<UserDataset | null>(null);
+const showConfirmReset = ref(false);
 
 const createTimeRangeActive = ref(false);
 const createDatasetActive = ref(false);
