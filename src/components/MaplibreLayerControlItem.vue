@@ -6,19 +6,30 @@
     <div
       class="mlc-layer-item-checkbox-label-container"
     >
-      <input
+      <v-checkbox
         v-model="visible"
-        type="checkbox"
         :id="`mlc-${layerId}-visibility-checkbox`"
         class="mlc-layer-item-checkbox"
-      />
+        density="compact"
+        hide-details
+        color="primary"
+      ></v-checkbox>
       <label
         class="mlc-layer-item-label"
         :for="`mlc-${layerId}-visibility-checkbox`"
       >
         {{ displayName ?? layerId }}
       </label>
+      <popup-info-button
+        v-if="info"
+        :info-text="info"
+      >
+        <template #info>
+          <div v-html="info"></div>
+        </template>
+      </popup-info-button>
     </div>
+    <slot name="actions"></slot>
     <div
       class="mlc-layer-item-opacity-label-container"
     >
@@ -27,15 +38,15 @@
       >
         Transparency: 
       </label>
-      <input
+      <v-slider
         v-model.number="opacity"
         :id="`mlc-${layerId}-opacity-slider`"
         class="mlc-layer-opacity-slider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
+        :min="0"
+        :max="1"
+        :step="0.01"
         title="Adjust layer opacity"
+        color="primary"
       />
     </div>
   </div>
@@ -51,6 +62,7 @@ interface Props {
   layerId: string;
   map: Map;
   displayName?: string;
+  info?: string;
 }
 
 const props = defineProps<Props>();
@@ -65,3 +77,12 @@ watch(() => [props.map, props.layerId],
     visible = useMaplibreLayerVisibility(map, layerId).visible;
   });
 </script>
+
+<style scoped>
+.mlc-layer-item-checkbox-label-container {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+</style>

@@ -11,6 +11,7 @@
             <layer-control-item
               :map="mapRef"
               :layer-id="element"
+              :info="layerInfo[element]"
               :display-name="displayNameTransform(element)"
             >
             </layer-control-item>
@@ -64,6 +65,10 @@ const layerNames: Record<string, string | undefined> = {
   "esri-source": "TEMPO Data",
   "aqi-layer-aqi": "Air Quality Index",
   "power-plants-heatmap": "Power Plants",
+};
+
+const layerInfo: Record<string, string | undefined> = {
+  "aqi-layer-aqi": 'From <a href="https://www.airnow.gov/aqi/aqi-basics/">EPA</a>; taken once per day',
 };
 
 function displayNameTransform(layerId: string): string {
