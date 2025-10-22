@@ -9,6 +9,11 @@
         :order="['power-plants-heatmap', 'aqi-layer-aqi', 'esri-source']"
       >
       </layer-order-control>
+      <v-checkbox
+        v-model="showFieldOfRegard"
+        label="Show TEMPO field of regard"
+      >
+      </v-checkbox>
       <power-plants-filter-control
         :map="map"
         layer-id="power-plants-heatmap"
@@ -25,5 +30,6 @@ import { useTempoStore } from "@/stores/app";
 const store = useTempoStore();
 const {
   maps,
+  showFieldOfRegard,
 } = storeToRefs(store);
 </script>

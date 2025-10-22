@@ -38,6 +38,9 @@ const createTempoStore = (backend: MappingBackends) => defineStore("tempods", ()
   const selectionActive = ref<SelectionType>(null);
   const focusRegion = ref<UnifiedRegion | null>(null);
 
+  const showFieldOfRegard = ref(false);
+  const showRoads = ref(true);
+
   const selectedTimezone = ref<Timezone>("US/Eastern");
   const { isDST, timezoneOptions: tzOptions } = useTimezone(selectedTimezone);
 
@@ -75,6 +78,7 @@ const createTempoStore = (backend: MappingBackends) => defineStore("tempods", ()
 
   const accentColor = ref("#068ede");
   const accentColor2 = ref("#ffcc33");
+  const tempoRed = ref("#b60e32");
 
 
   function getTempoDataService(molecule: MoleculeType) {
@@ -321,6 +325,7 @@ const createTempoStore = (backend: MappingBackends) => defineStore("tempods", ()
   return {
     accentColor,
     accentColor2,
+    tempoRed,
 
     selectedTimezone,
     dateIsDST,
@@ -328,6 +333,9 @@ const createTempoStore = (backend: MappingBackends) => defineStore("tempods", ()
 
     selectionActive,
     focusRegion,
+
+    showFieldOfRegard,
+    showRoads,
 
     homeState,
     initState,

@@ -77,103 +77,18 @@
         <div v-if="showFieldOfRegard" class="map-legend"><hr class="line-legend">TEMPO Field of Regard</div>
         <!-- show hide cloud data, disable if none is available -->
 
-        <v-menu
-          class="map-controls"
-          v-model="showControls"
-          :close-on-content-click="false"
-        >
-          <template v-slot:activator="{ props }">
-            <div class="map-show-hide-controls">
-              <v-btn
-                v-bind="props"
-                class="mx-2 mt-5"
-                elevation="2"
-                color="white"
-                icon
-                style="outline: 2px solid #b6b6b6;"
-                rounded="0"
-                size="x-small"
-              >
-                <template v-slot:default>
-                  <v-icon
-                    color="black"
-                    size="x-large"
-                  >mdi-tune-variant</v-icon>
-                </template>
-              </v-btn>
-            </div>
-          </template>
-          <v-card class="controls-card">
-            <font-awesome-icon
-              style="position:absolute;right:16px;cursor:pointer"
-              icon="square-xmark"
-              size="xl"
-              @click="showControls = false"
-              @keyup.enter="showControls = false"
-              :color="accentColor2"
-              tabindex="0"
-            ></font-awesome-icon>
-            <div
-              class="opacity-slider-container mt-5"
-            >
-              <div class="opacity-slider-label">TEMPO data opacity</div>
-              <v-slider
-                  v-model="opacity"
-                  :min="0"
-                  :max="1"
-                  color="#c10124"
-                  density="compact"
-                  hide-details
-                  class="mb-4"
-                  @end="opacitySliderUsedCount += 1"
-                >
-              </v-slider>
-            </div>
-            <div
-              class="d-flex flex-row align-center justify-space-between"
-            >
-              <v-checkbox
-                v-model="showRoads"
-                @keyup.enter="showRoads = !showRoads"
-                label="Show Roads"
-                color="#c10124"
-                hide-details
-              />
-            </div>
-            <div
-              class="d-flex flex-row align-center justify-space-between"
-            >
-              <v-checkbox
-                v-model="showFieldOfRegard"
-                @keyup.enter="showFieldOfRegard = !showFieldOfRegard"
-                label="TEMPO Field of Regard"
-                color="#c10124"
-                hide-details
-              />
-              <info-button>
-                <p>
-                  The TEMPO satellite observes the atmosphere over North America, from the Atlantic Ocean to the Pacific Coast, and from roughly Mexico City to central Canada. 
-                </p>
-                <p>
-                  The TEMPO Field of Regard (in <span class="text-red">red</span>, currently <em>{{ showFieldOfRegard ? 'visible' : "hidden" }}</em>)
-                  is the area over which the satellite takes measurements. 
-                </p>
-                </info-button>
-              </div>
-          </v-card>
-        </v-menu>
         <div class="location-and-sharing">
-        <location-search
-          v-model="searchOpen"
-          small
-          stay-open
-          buttonSize="xl"
-          persist-selected
-          :search-provider="geocodingInfoForSearchLimited"
-          @set-location="setLocationFromSearch"
-          @error="(error: string) => searchErrorMessage = error"
-        ></location-search>
-      </div>
+          <location-search
+            v-model="searchOpen"
+            small
+            stay-open
+            buttonSize="xl"
+            persist-selected
+            :search-provider="geocodingInfoForSearchLimited"
+            @set-location="setLocationFromSearch"
+            @error="(error: string) => searchErrorMessage = error"
+          ></location-search>
+        </div>
       </v-card>
     </map-colorbar-wrap>
     <div class="slider-row mx-16 mt-12">
@@ -270,6 +185,8 @@ const {
   focusRegion,
   initState,
   homeState,
+  showFieldOfRegard,
+  showRoads,
 } = storeToRefs(store);
 
 const molecule = ref<MoleculeType>("no2");
@@ -323,7 +240,8 @@ const aqiLayer = addQUI(airQualityUrl.value, {
   layerName: 'aqi', 
   visible: true,
   showLabel: true, 
-  showPopup: true });
+  showPopup: true
+});
 
 // Ensure date/url changes trigger a reload, even if initial load failed
 watch(airQualityUrl, (newUrl) => {
@@ -358,9 +276,6 @@ const {
   locationMarker,
 } = useLocationMarker(map as Ref<Map | null>, showLocationMarker.value);
 
-const showFieldOfRegard = ref(false);
-const showControls = ref(false);
-const showRoads = ref(true);
 const opacity = ref(0.9);
 const showSamplingPreviewMarkers = ref(false);
 const playing = ref(false);
