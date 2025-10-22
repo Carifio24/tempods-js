@@ -60,8 +60,14 @@ const displayOrder = computed({
   }
 });
 
+const layerNames: Record<string, string | undefined> = {
+  "esri-source": "TEMPO Data",
+  "aqi-layer-aqi": "Air Quality Index",
+  "power-plants-heatmap": "Power Plants",
+};
+
 function displayNameTransform(layerId: string): string {
-  return capitalizeWords(layerId.replace(/-/g, " "));
+  return layerNames[layerId] ?? capitalizeWords(layerId.replace(/-/g, " "));
 }
 </script>
 
