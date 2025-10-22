@@ -12,6 +12,8 @@
       <v-checkbox
         v-model="showFieldOfRegard"
         label="Show TEMPO field of regard"
+        density="compact"
+        hide-details
       >
       </v-checkbox>
       <power-plants-filter-control

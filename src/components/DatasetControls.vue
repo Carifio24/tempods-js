@@ -32,6 +32,12 @@
                 {{ selectionActive === 'rectangle' ? "Cancel" : "New Region" }}
               </v-btn>
             </div>
+            <v-checkbox
+              v-model="showSamplingPreviewMarkers"
+              label="Show sample points"
+              density="compact"
+              hide-details
+            ></v-checkbox>
             <div class="my-selections" v-if="regions.length>0" style="margin-top: 1em;">
             <h4>My Regions</h4>                   
               <v-list>
@@ -716,6 +722,7 @@ const {
   uniqueDays,
   selectionActive,
   focusRegion,
+  showSamplingPreviewMarkers,
 } = storeToRefs(store);
 
 const cssVars = computed(() => {

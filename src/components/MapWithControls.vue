@@ -17,17 +17,6 @@
           <v-toolbar-title :text="`TEMPO Data Viewer: ${mapTitle}`"></v-toolbar-title>
           <v-spacer></v-spacer>
           <!-- switch for preview points -->
-           <v-switch
-            v-if="regions.length > 0"
-            v-model="showSamplingPreviewMarkers"
-            :label="`${showSamplingPreviewMarkers ? 'Showing' : 'Hiding'} Sample Points`"
-            :disabled="regions.length === 0"
-            @keyup.enter="showSamplingPreviewMarkers = !showSamplingPreviewMarkers"
-            inset
-            hide-details
-            class="me-3"
-            :style="{'--v-theme-on-surface': 'var(--accent-color)'}"
-            />
           <v-tooltip :text="selectionActive === 'rectangle' ? 'Cancel selection' : 'Select a region'">
             <template #activator="{ props }">
               <v-btn
@@ -166,8 +155,6 @@ const mapID = `map-${v4().replace("-", "")}`;
 
 const store = useTempoStore();
 const {
-  accentColor2,
-  opacitySliderUsedCount,
   regions,
   timestamp,
   timeIndex,
@@ -187,6 +174,7 @@ const {
   homeState,
   showFieldOfRegard,
   showRoads,
+  showSamplingPreviewMarkers,
 } = storeToRefs(store);
 
 const molecule = ref<MoleculeType>("no2");
@@ -277,7 +265,6 @@ const {
 } = useLocationMarker(map as Ref<Map | null>, showLocationMarker.value);
 
 const opacity = ref(0.9);
-const showSamplingPreviewMarkers = ref(false);
 const playing = ref(false);
 const playInterval = ref<Timeout | null>(null);
 
