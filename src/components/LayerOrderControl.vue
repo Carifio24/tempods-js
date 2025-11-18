@@ -16,6 +16,11 @@
           :info="layerInfo[element]"
           :display-name="displayNameTransform(element)"
         >
+          <template #info
+            v-if="layerInfo[element]"
+          >
+            <div v-html="layerInfo[element]"></div>
+          </template>
           <template #actions="{ visible }">
             <div v-if="powerPlantLayerIds.includes(element)">
               <v-btn-toggle
