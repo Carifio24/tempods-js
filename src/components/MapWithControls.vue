@@ -256,8 +256,24 @@ const hmsFire = addHMSFire(singleDateSelected, {
 
 import { type UseEsriLayer, useEsriLayer } from "@/esri/maplibre/useEsriImageLayer";
 // just use the hcho layer for now
-const hchoLayer = useEsriLayer('hcho', timestamp, 1, true, 'tempo-hcho', false);
-const ozoneLayer = useEsriLayer('o3', timestamp, 1, true, 'tempo-o3', false);
+const hchoLayer = useEsriLayer({
+  initialMolecule: "hcho",
+  timestamp,
+  opacity: 1,
+  fetchOnMount: true,
+  layerName: "tempo-hcho",
+  initVisible: false,
+  initRGB: showRGBMode.value,
+});
+const ozoneLayer = useEsriLayer({
+  initialMolecule: "o3",
+  timestamp,
+  opacity: 1,
+  fetchOnMount: true,
+  layerName: "tempo-o3",
+  initVisible: false,
+  initRGB: showRGBMode.value,
+});
 const no2Layer = ref<UseEsriLayer | null>(null);
 
 function addAdvancedLayers(m: Map | null) {

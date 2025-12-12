@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import { ref, watch, toRef, computed, defineExpose, type Ref, useTemplateRef, onMounted, defineModel } from 'vue';
 import type { PropType } from 'vue';
+import { storeToRefs } from "pinia";
 import type { Map } from 'maplibre-gl';
 import MaplibreMap from './MaplibreMap.vue';
 import { useEsriLayer } from '@/esri/maplibre/useEsriImageLayer';
@@ -54,6 +55,8 @@ import type { AvailableColorMaps } from "@/colormaps";
 import { useTempoStore } from "@/stores/app";
 
 const store = useTempoStore();
+
+const { showRGBMode } = storeToRefs(store);
 
 const props = defineProps({
   mapID: { type: String, required: true },
@@ -160,13 +163,15 @@ const timestampRef = toRef(props, 'timestamp');
 const opacityRef = toRef(props, 'opacity');
 
 // ESRI layer composable
-const theEsriLayer = useEsriLayer(
-  molecule,
-  timestampRef,
-  opacityRef,
-  true,
-  props.maplibreLayerName
-);
+const theEsriLayer = useEsriLayer({
+  initialMolecule: molecule,
+  timestamp: timestampRef,
+  opacity: opacityRef,
+  fetchOnMount: true,
+  layerName: props.maplibreLayerName,
+  initVisible: true,
+  initRGB: showRGBMode.value,
+});
 
 const { loadingEsriTimeSteps, addEsriSource, esriTimesteps, renderOptions } = theEsriLayer;
 console.log(theEsriLayer);
