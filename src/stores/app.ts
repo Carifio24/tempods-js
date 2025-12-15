@@ -497,3 +497,9 @@ export function postDeserializeTempoStore(store: TempoStore) {
     }
   }
 }
+
+export function updateStoreFromJSON(store: TempoStore, json: string) {
+  const state = deserializeTempoStore(json);
+  store.$patch(state);
+  postDeserializeTempoStore(store);
+}
