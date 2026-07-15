@@ -499,7 +499,11 @@ export function deserializeTempoStore(value: string, compressed: boolean): State
 }
 
 const OMIT = new Set(["debugMode", "selectionActive", "maps", "layersReady"]);
-export function serializeTempoStore(store: TempoStore, compress: boolean): string {
+export interface TempoStoreSerializationOptions {
+  compress: boolean;
+  prettify?: boolean;
+}
+export function serializeTempoStore(store: TempoStore, options: TempoStoreSerializationOptions): string {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const state: Record<string, any> = {};
   for (const [key, value] of Object.entries(store.$state)) {
@@ -514,7 +518,7 @@ export function serializeTempoStore(store: TempoStore, compress: boolean): strin
     return s;
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const serializer = compress ? zipson.stringify : (obj: any) => JSON.stringify(obj, null, 2);
+  const serializer = options.compress ? zipson.stringify : (options.prettify ? (obj: any) => JSON.stringify(obj, null, 2) : JSON.stringify);
   const stringified = serializer(state);
   return stringified;
 }

@@ -26,13 +26,14 @@
         text="Coming soon!"
       >
         <template #activator="{ props }">
-          <span v-bind="props">
-            <v-icon
-              icon="mdi-google-drive"
-              :color="accentColor"
-              disabled
-            />
-          </span>
+          <div
+            v-bind="props"
+            id="google-drive-save"
+            class="['g-savetodrive', googleDriveReady ? '' : 'disabled']"
+            data-src="null"
+            data-filename="tempo_lab.json"
+            data-sitename="TEMPO Lab"
+          ></div>
         </template>
       </v-tooltip>
     </div>
@@ -71,6 +72,7 @@
 
 
 <script setup lang="ts">
+import { ref, onBeforeMount } from "vue";
 import { storeToRefs } from "pinia";
 import { type TempoStore, useTempoStore, serializeTempoStore, updateStoreFromJSON } from "@/stores/app";
 
@@ -84,6 +86,8 @@ type OpType = "save" | "load";
 type Target = "local" | "google-drive";
 type EventType = `${OpType}-${Target}`;
 
+const googleDriveReady = ref(false);
+
 const emit = defineEmits<{
   (event: "save-local"): void;
   (event: "load-local"): void;
@@ -93,6 +97,48 @@ const emit = defineEmits<{
 }>();
 
 const DEFAULT_FILENAME = "tempo_lab.json";
+
+onBeforeMount(() => {
+  const content = serializeTempoStore(store, { compress: false, prettify: false });
+  console.log(content.length);
+  const data = new File([content], "tempo_lab.json", { type: "application/json" });
+  fetch("https://api.cosmicds.cfa.harvard.edu/temp", {
+    method: "POST",
+    headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "",
+    },
+    body: data,
+  }).then(async response => {
+    console.log(response);
+    if (response.status == 201) {
+      const json = await response.json();
+      changeDriveSource(json.url);
+      googleDriveReady.value = true;
+    }
+  });
+});
+
+function changeDriveSource(url: string) {
+  const id = "google-drive-save";
+  const saveButton = document.getElementById(id);
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error We imported the Google API JS in the page skeleton
+  const googleAPI: unknown = window.gapi;
+  
+  if (saveButton && googleAPI) {
+    saveButton.setAttribute('data-src', url);
+    saveButton.innerHTML = '';
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error This field exists
+    googleAPI.savetodrive.render(id, {
+      src: url,
+      filename: "tempo_lab.json",
+      sitename: "TEMPO Lab",
+    });
+  }
+}
 
 async function saveLocalFileSystemAPI(store: TempoStore): Promise<boolean> {
   const options = {
@@ -106,7 +152,7 @@ async function saveLocalFileSystemAPI(store: TempoStore): Promise<boolean> {
     multiple: false,
   };
 
-  const content = serializeTempoStore(store, false);
+  const content = serializeTempoStore(store, { compress: false, prettify: true });
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore window *might* have this, and if we're here it should
@@ -126,7 +172,7 @@ async function saveLocalFileSystemAPI(store: TempoStore): Promise<boolean> {
 }
 
 function saveLocalLink(store: TempoStore) {
-  const content = serializeTempoStore(store, false);
+  const content = serializeTempoStore(store, { compress: false, prettify: true });
 
   const blob = new Blob([content], { type: "application/json" });
   const link = document.createElement("a");
@@ -228,5 +274,11 @@ async function loadLocal() {
   align-items: center;
   gap: 5px;
   padding: 5px;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  user-select: none;
 }
 </style>

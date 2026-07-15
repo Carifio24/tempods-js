@@ -191,7 +191,7 @@ function getBasis(panel: HTMLElement): number {
 
 function saveStateToLocalStorage(): boolean {
   try {
-    const stringified = serializeTempoStore(store, true);
+    const stringified = serializeTempoStore(store, { compress: true });
     window.localStorage.setItem(localStorageStateKey, stringified);
     return true;
   } catch (_error) {
@@ -387,7 +387,7 @@ watch(useLocalStorage, writeLocalStoragePreference);
 }
 
 // JC: This was commented out, but I put it back in because my browser (Chrome on Ubuntu) didn't already have Lexend
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
 
 html, body {
   width: 100%;
