@@ -100,19 +100,20 @@ const DEFAULT_FILENAME = "tempo_lab.json";
 
 onBeforeMount(() => {
   const content = serializeTempoStore(store, { compress: false, prettify: false });
-  console.log(content.length);
-  const data = new File([content], "tempo_lab.json", { type: "application/json" });
-  fetch("https://api.cosmicds.cfa.harvard.edu/temp", {
+  const data = new Blob([content], { type: "application/json" });
+  const formData = new FormData();
+  formData.append("file", data, "tempo_lab.json");
+  fetch("http://localhost:8080/temp", {
     method: "POST",
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "",
     },
-    body: data,
+    body: formData,
   }).then(async response => {
-    console.log(response);
     if (response.status == 201) {
       const json = await response.json();
+      console.log(json);
       changeDriveSource(json.url);
       googleDriveReady.value = true;
     }
