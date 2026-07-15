@@ -103,7 +103,7 @@ onBeforeMount(() => {
   const data = new Blob([content], { type: "application/json" });
   const formData = new FormData();
   formData.append("file", data, "tempo_lab.json");
-  fetch("http://localhost:8080/temp", {
+  fetch("https://api.cosmicds.cfa.harvard.edu/temp", {
     method: "POST",
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
