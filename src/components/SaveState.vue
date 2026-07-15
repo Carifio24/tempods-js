@@ -23,13 +23,13 @@
       </v-tooltip>
       <v-tooltip
         location="top"
-        text="Coming soon!"
+        text="Save to Google Drive"
       >
         <template #activator="{ props }">
           <div
             v-bind="props"
             id="google-drive-save"
-            class="['g-savetodrive', googleDriveReady ? '' : 'disabled']"
+            :class="['g-savetodrive', googleDriveReady ? 'active' : 'disabled']"
             data-src="null"
             data-filename="tempo_lab.json"
             data-sitename="TEMPO Lab"
@@ -113,7 +113,6 @@ onBeforeMount(() => {
   }).then(async response => {
     if (response.status == 201) {
       const json = await response.json();
-      console.log(json);
       changeDriveSource(json.url);
       googleDriveReady.value = true;
     }
@@ -131,6 +130,7 @@ function changeDriveSource(url: string) {
   if (saveButton && googleAPI) {
     saveButton.setAttribute('data-src', url);
     saveButton.innerHTML = '';
+    console.log(url);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error This field exists
     googleAPI.savetodrive.render(id, {
@@ -277,9 +277,19 @@ async function loadLocal() {
   padding: 5px;
 }
 
+.g-savetodrive {
+  user-select: none;
+}
+
+.active {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+}
+
 .disabled {
   pointer-events: none;
   opacity: 0.6;
-  user-select: none;
+  cursor: not-allowed;
 }
 </style>
