@@ -27,10 +27,11 @@
       >
         <template #activator="{ props }">
           <div
+            v-if="true"
             v-bind="props"
             id="google-drive-save"
             :class="['g-savetodrive', googleDriveReady ? 'active' : 'disabled']"
-            data-src="null"
+            :data-src="driveUrl"
             data-filename="tempo_lab.json"
             data-sitename="TEMPO Lab"
           ></div>
@@ -72,7 +73,7 @@
 
 
 <script setup lang="ts">
-import { ref, onBeforeMount } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { type TempoStore, useTempoStore, serializeTempoStore, updateStoreFromJSON } from "@/stores/app";
 
@@ -98,39 +99,77 @@ const emit = defineEmits<{
 
 const DEFAULT_FILENAME = "tempo_lab.json";
 
-onBeforeMount(() => {
+let googleAPI: unknown = null as unknown;
+const driveUrl = ref<string | null>(null);
+
+function ensureGapiConfig() {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error window field should exist
+  window.___gcfg = window.___gcfg ?? { parsetags: 'explicit' };
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error window field should exist
+function waitForGapi(timeout = 10000): Promise<typeof window.gapi> {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error window field should exist
+      if (window.gapi) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error window field should exist
+        resolve(window.gapi);
+      } else if (Date.now() - start > timeout) {
+        reject(new Error("gapi failed to load within timeout"));
+      } else {
+        setTimeout(check, 100);
+      }
+    };
+    check();
+  });
+}
+
+onMounted(async () => {
+  ensureGapiConfig();
+
   const content = serializeTempoStore(store, { compress: false, prettify: false });
   const data = new Blob([content], { type: "application/json" });
   const formData = new FormData();
   formData.append("file", data, "tempo_lab.json");
-  fetch("https://api.cosmicds.cfa.harvard.edu/temp", {
-    method: "POST",
-    headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "",
-    },
-    body: formData,
-  }).then(async response => {
-    if (response.status == 201) {
-      const json = await response.json();
+  const [response, gapi] = await Promise.all([
+    fetch("https://api.cosmicds.cfa.harvard.edu/temp", {
+      method: "POST",
+      headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "",
+      },
+      body: formData,
+    }),
+    waitForGapi(),
+  ]);
+
+  if (response.status == 201) {
+    const json = await response.json();
+    gapi.load("auth:drive-share", async () => {
+      console.log("HERE");
+      await nextTick();
+      googleAPI = gapi;
       changeDriveSource(json.url);
+      driveUrl.value = json.url;
       googleDriveReady.value = true;
-    }
-  });
+    });
+  }
+
 });
 
 function changeDriveSource(url: string) {
   const id = "google-drive-save";
   const saveButton = document.getElementById(id);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error We imported the Google API JS in the page skeleton
-  const googleAPI: unknown = window.gapi;
-  
   if (saveButton && googleAPI) {
     saveButton.setAttribute('data-src', url);
     saveButton.innerHTML = '';
-    console.log(url);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error This field exists
     googleAPI.savetodrive.render(id, {
